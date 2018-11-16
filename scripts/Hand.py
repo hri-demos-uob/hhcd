@@ -14,7 +14,7 @@ import time
 from naoqi import ALProxy
 
 #Importing scripts
-import arm
+import Arm
 
 
 
@@ -24,7 +24,8 @@ def main(IP, PORT):
 
 	#################################
 	###TESTING
-	#LH,RH=0,1 #Left Hand  #Right Hand
+	##LH,RH=0,1 #Left Hand  #Right Hand
+	#LH,RH=1,0 #Left Hand  #Right Hand
 	#a=choose(IP,PORT,LH,RH)
 	#print(a)
 
@@ -33,7 +34,8 @@ def main(IP, PORT):
 
 def choose(IP,PORT,LH,RH):
 	proxy = ALProxy("ALMotion",IP,PORT)
-	names = "Body"
+	#names = "Body"
+	names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
 	stiffness = 1.0
 	proxy.stiffnessInterpolation(names, stiffness, 1.0)
 	proxy.setAngles("HeadPitch",0.157,0.2)
@@ -41,13 +43,13 @@ def choose(IP,PORT,LH,RH):
 	if LH==1: #Left Hand
         	proxy.setAngles("LHand",0.25,0.2)
         	time.sleep(0.5)
-        	arm.Left_Arm(IP,PORT,proxy)
+        	Arm.Left_Arm(IP,PORT,proxy)
         	time.sleep(0.5)
         	pick_flag=True
     	elif RH==1: #Right Hand
         	proxy.setAngles("RHand",0.25,0.2)
         	time.sleep(0.5)
-        	arm.Right_Arm(IP,PORT,proxy)
+        	Arm.Right_Arm(IP,PORT,proxy)
         	time.sleep(0.5)
         	pick_flag=True
     	else:

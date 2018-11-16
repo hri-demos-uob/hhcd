@@ -14,9 +14,6 @@ import numpy as np
 import cv2
 from naoqi import ALProxy
 from PIL import Image
-#import naoqi
-#import PIL
-#import math
 
 #Importing scripts
 import Hand
@@ -24,52 +21,55 @@ import Hand
 
 def main(IP, PORT):
 	blockwidth = 4
+
+
 	proxy = ALProxy("ALMotion",IP,PORT)
+	#names = "Body"
+	names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
+	stiffness = 1.0
+	proxy.stiffnessInterpolation(names, stiffness, 1.0)
     	#proxy.wakeUp()
 
 	tts = ALProxy("ALTextToSpeech", IP, PORT)
     	tts.setVolume(1.5)  ##Volume set to 100%
    	tts.setParameter("pitchShift", 1.2) #Applies a pitch shifting to the voice
     	tts.setParameter("doubleVoice", 0.0) #Deactivates double voice
+
+
+
  
 	################################
 	##TESTING		
 	
 	###########
-	###TESTING: def getframe(IP,PORT,flag):
+	###(1) TESTING: getframe(IP,PORT) and showimage
 	#img=getframe(IP,PORT)
 	#print(img)
-
 	#showimage(img)
 
-	#Applying Grayscale filter to image
-	#gray = cv2.cvtColor(a, cv2.COLOR_BGR2GRAY)
-	#cv2.imwrite('graytest.jpg',gray)
-	#[x] https://docs.python-guide.org/scenarios/imaging/
-
 	##########
-	###TESTING: def target(IP,PORT,LH,LS,LV,UH,US,UV,tts):
+	###(2) TESTING: def target(IP,PORT,LH,LS,LV,UH,US,UV,tts):
        	#LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
-        #LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue': 
+        ##LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue': 
 	#d=target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
 	#print(d)
 
 
 	##########
-	###TESTING: def getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts):
-       	#LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
-       	#LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':
+	###(3) TESTING: def getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts):
+        #LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
+       	##LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':
 	#cx,cy=getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
 	#print(cx,cy)
 
 	##########
-	###TESTING: 	def hand(IP,PORT):
+	###(4) TESTING: 	def hand(IP,PORT):
 	#h=hand(IP,PORT,tts,showingimage=True)
 	#print(h)
 
 
 	##########
-	###TESTING: #def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV):
+	###(5) TESTING: #def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV):
 	#x,y=0,0
        	##LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
         #LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':	
@@ -79,6 +79,14 @@ def main(IP, PORT):
 	#print(a,b)
 
     	##proxy.rest() # Go to rest pose 
+
+
+	##############
+	###(6) TESTING: def check(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
+       	##LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
+        #LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':		
+	#d=check(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
+	#print(d)
 
 
 def getframe(IP,PORT):
@@ -111,9 +119,9 @@ def getframe(IP,PORT):
 	return ci
 
 def target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
-    	detection=0
-    	image=getframe(IP,PORT)
-    	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+	detection=0
+	image=getframe(IP,PORT)
+	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
 	##define range of green color in HSV
     	#lower_green = np.array([50,55,5])
@@ -129,7 +137,6 @@ def target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
     	ret, binary = cv2.threshold(resf, 2, 255, cv2.THRESH_BINARY)
     	img2, contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     	
-
 	area_threshold=2000 # this threshold migth change according to light conditions
 	for contour in contours:
         	area = cv2.contourArea(contour)
@@ -148,43 +155,54 @@ def target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
 					cv2.drawContours(image, contour, -1, (0, 255, 0), 3)
  					showimage(image)
 
-
-
 	return detection
 
 
-#def check(IP,PORT,LH,LS,LV,UH,US,UV):
-#    detection=0
-#    image=getframe(IP,PORT)
-#    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-#
-#    # define range of green color in HSV
-#    #lower_green = np.array([50,55,5])
-#    #upper_green = np.array([105,255,140])
-#    #mask = cv2.inRange(hsv, lower_green, upper_green)
-#    
-#    lower_colo = np.array([LH,LS,LV])
-#    upper_colo = np.array([UH,US,UV])
-#    mask = cv2.inRange(hsv, lower_colo, upper_colo)
-#    resf=cv2.medianBlur(mask,5)
-#
-#    ret, binary = cv2.threshold(resf, 2, 255, cv2.THRESH_BINARY)
-#    contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-#    
-#    for i in range(len(contours)):
-#        area=cv2.contourArea(contours[i])
-#        d=cv2.minAreaRect(contours[i])
-#        cen=d[1]
-#        if  area>5000 and area<16000:
-#            detection=1
-#            print("area",area)
-#            tts.say("I see the brick")
-#    return detection
-#
+def check(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
+	detection=0
+	image=getframe(IP,PORT)
+	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+	
+	# define range of green color in HSV
+    	#lower_green = np.array([50,55,5])
+    	#upper_green = np.array([105,255,140])
+    	#mask = cv2.inRange(hsv, lower_green, upper_green)
+    
+    	lower_colo = np.array([LH,LS,LV])
+    	upper_colo = np.array([UH,US,UV])
+    	mask = cv2.inRange(hsv, lower_colo, upper_colo)
+    	resf=cv2.medianBlur(mask,5)
+	
+    	ret, binary = cv2.threshold(resf, 2, 255, cv2.THRESH_BINARY)
+    	img2, contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    	
+	area_threshold=2000 # this threshold migth change according to light conditions
+	for contour in contours:
+        	area = cv2.contourArea(contour)
+        	d=cv2.minAreaRect(contour) # returns ( center (x,y), (width, height), angle of rotation )
+        	cen=d[1]
+ 		#print(area)
+ 		#print(d)
+ 		#print(cen)
+		
+		if area > area_threshold:
+        	#if  area>5000 and area<16000:
+                		detection=1
+                		print("area",area)
+                		tts.say("I see a LEGO brick")
+	
+				if showingimage == True:
+					cv2.drawContours(image, contour, -1, (0, 255, 0), 3)
+ 					showimage(image)
+
+	
+	return detection
+
 
 
 
 def getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
+	#nao_inclined_head(IP,PORT)
 	x=y=z=0
 	detection=0
 	image=getframe(IP,PORT)
@@ -231,6 +249,9 @@ def getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
 		else:
 			#tts.say("I can not see the green brick")
 			print("error")
+
+	
+	#nao_relax_body(IP,PORT)
 	
 	return (x,y)
 
@@ -302,12 +323,31 @@ def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV,tts):
 
 
 
+def nao_inclined_head(IP,PORT):
+	proxy = ALProxy("ALMotion",IP,PORT)
+	#names = "Body"
+	names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
+	stiffness = 1.0
+	proxy.stiffnessInterpolation(names, stiffness, 1.0)
+	proxy.setAngles("HeadPitch",0.157,0.2)
+
+
+def nao_relax_body(IP,PORT):
+	proxy = ALProxy("ALMotion",IP,PORT)
+    	proxy.rest() # Go to rest pose 
+
+
 def showimage(img):
 	cv2.imshow('image',img)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
 
-	
+
+	#Applying Grayscale filter to image
+	#gray = cv2.cvtColor(a, cv2.COLOR_BGR2GRAY)
+	#cv2.imwrite('graytest.jpg',gray)
+	#[x] https://docs.python-guide.org/scenarios/imaging/
+
 
 
 
