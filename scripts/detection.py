@@ -15,9 +15,12 @@ import cv2
 from naoqi import ALProxy
 from PIL import Image
 
+
 #Importing scripts
 import Hand
 
+# global variables
+bg = None
 
 
 def getframe(IP,PORT):
@@ -45,9 +48,9 @@ def getframe(IP,PORT):
     	im = Image.frombytes("RGB", (imageWidth, imageHeight), array)
     	ci = np.array(im)  
     	r, g, b = cv2.split(ci) 
-    	ci = cv2.merge([b, g, r])
+    	image = cv2.merge([b, g, r])
 
-	return ci
+	return image
 
 def target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
 	detection=0
@@ -192,8 +195,15 @@ def getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
 def hand(IP,PORT,tts,showingimage=False):
 	findhand=0
     	image=getframe(IP,PORT)
-    	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-	
+
+	#testing equalised value    		
+	#showimage(image)
+	#ei=hsv_equalized(image)
+	#showimage(ei)
+
+	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+		
 	# define range of green color in HSV
     	lower_green = np.array([5,45,5])
     	upper_green = np.array([12,255,255])
@@ -202,9 +212,13 @@ def hand(IP,PORT,tts,showingimage=False):
     	
     	resf=cv2.medianBlur(mask,5)
 
+	#showimage(resf)
+
+
 	ret, binary = cv2.threshold(resf, 2, 255, cv2.THRESH_BINARY)
     	img2, contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
    
+
 	area_threshold=22000 # this threshold migth change according to light conditions
 	for contour in contours:
         	area = cv2.contourArea(contour)
@@ -266,6 +280,140 @@ def showimage(img):
 	#[x] https://docs.python-guide.org/scenarios/imaging/
 
 
+
+## One way to deal with the variation of lighting is normalising the lightligin 
+## by equalising the contrast of the images 
+## [1](http://answers.opencv.org/question/9054/color-constancy-in-different-illumination-condition/)
+
+## An alternative is to first convert the image to the HSL or HSV color space 
+## and then apply the histogram equalization only on the lightness or value 
+## channel by leaving the hue and the saturation of the image unchanged. 
+## Here's the code that applies the histogram equalization on the value 
+## channel of the HSV color space:
+## [1](https://lmcaraig.com/image-histograms-histograms-equalization-and-histograms-comparison/)
+
+def hsv_equalized(image):
+	H, S, V = cv2.split(cv2.cvtColor(image, cv2.COLOR_BGR2HSV))
+	eq_V = cv2.equalizeHist(V)
+	eq_image = cv2.cvtColor(cv2.merge([H, S, eq_V]), cv2.COLOR_HSV2RGB)
+    	
+	return eq_image
+
+	
+#-------------------------------------------------------------------------------
+# Function - To find the running average over the background
+#-------------------------------------------------------------------------------
+def run_avg(image, aWeight):
+    global bg
+    # initialize the background
+    if bg is None:
+        bg = image.copy().astype("float")
+        return
+
+    # compute weighted average, accumulate it and update the background
+    cv2.accumulateWeighted(image, bg, aWeight)
+
+# https://gogul09.github.io/software/hand-gesture-recognition-p1
+# https://github.com/Gogul09/gesture-recognition/blob/master/part1.py
+
+
+
+#-------------------------------------------------------------------------------
+# Function - To segment the region of hand in the image
+#-------------------------------------------------------------------------------
+def segment(image, threshold=25):
+    global bg
+    # find the absolute difference between background and current frame
+    diff = cv2.absdiff(bg.astype("uint8"), image)
+
+    # threshold the diff image so that we get the foreground
+    thresholded = cv2.threshold(diff,
+                                threshold,
+                                255,
+                                cv2.THRESH_BINARY)[1]
+
+    # get the contours in the thresholded image
+    (_, cnts, _) = cv2.findContours(thresholded.copy(),
+                                    cv2.RETR_EXTERNAL,
+                                    cv2.CHAIN_APPROX_SIMPLE)
+
+    # return None, if no contours detected
+    if len(cnts) == 0:
+        return
+    else:
+        # based on contour area, get the maximum contour which is the hand
+        segmented = max(cnts, key=cv2.contourArea)
+        return (thresholded, segmented)
+
+# https://gogul09.github.io/software/hand-gesture-recognition-p1
+# https://github.com/Gogul09/gesture-recognition/blob/master/part1.py
+
+
+
+
+def hand_gesture_recognition(IP, PORT):
+	 # initialize weight for running average
+	aWeight = 0.5
+
+	# get the reference to the webcam
+	#camera = cv2.VideoCapture(0)
+
+	# region of interest (ROI) coordinates
+	top, right, bottom, left = 10, 350, 225, 590
+
+	# initialize num of frames
+	num_frames = 0
+
+	#i=getframe(IP,PORT)
+	#showimage(i)
+
+
+	# keep looping, until interrupted
+	while(True):
+		
+		# get frame
+		frame=getframe(IP,PORT)
+		# flip the frame so that it is not the mirror view
+		frame = cv2.flip(frame, 1)
+
+		# clone the frame
+		clone = frame.copy()
+
+
+		# convert the roi to grayscale and blur it
+		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		gray = cv2.GaussianBlur(gray, (7, 7), 0)
+
+		showimage(gray)
+
+
+		# to get the background, keep looking till a threshold is reached
+		# so that our running average model gets calibrated
+		if num_frames < 30:
+			run_avg(gray, aWeight)
+	        else:
+        		# segment the hand region
+			hand = segment(gray)
+
+			# check whether hand region is segmented
+			if hand is not None:
+				# if yes, unpack the thresholded image and
+				# segmented region
+				(thresholded, segmented) = hand
+
+				# draw the segmented region and display the frame
+				cv2.drawContours(clone, [segmented + (right, top)], -1, (0, 0, 255))
+				cv2.imshow("Thesholded", thresholded)
+
+		# draw the segmented hand
+		cv2.rectangle(clone, (left, top), (right, bottom), (0,255,0), 2)
+
+		##testing
+		#	break
+
+
+# https://gogul09.github.io/software/hand-gesture-recognition-p1
+# https://github.com/Gogul09/gesture-recognition/blob/master/part1.py
 
 
 

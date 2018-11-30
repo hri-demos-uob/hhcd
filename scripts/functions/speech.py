@@ -22,7 +22,8 @@ def Rec(IP,PORT,tts):
     asr.pause(True)
     asr.setLanguage("English")
 
-    vocabulary = ["Green", "Yellow", "Blue", "Red","Green Brick","Pick Green Brick","Pick Up Green Brick","Please Pick Up Green Brick"]
+    vocabulary = ["Green", "Green Brick", "Pick Green Brick", "Pick Up Green Brick",
+		  "Blue", "Blue Brick", "Pick Blue Brick", "Pick Up Blue Brick"]
     asr.setVocabulary(vocabulary, False)
 
     # Start the speech recognition engine with user Test_ASR

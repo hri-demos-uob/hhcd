@@ -10,8 +10,10 @@ to test nao!
 2. Put away the box
 
 3. Run
+```
 python main-nao.py
-# go into a lop to listen red or green
+```
+  * which goes into a lop that waits to listen either blue or green
 
 4. Put box close to NAO 
 	NB. put it at the rigth distance!

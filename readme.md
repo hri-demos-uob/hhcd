@@ -5,12 +5,12 @@ Demonstration of Human-Humanoid Collaboration
 
 
 
-# Author Contributions
+## Author Contributions
 
-Contribution for this work of
-Miguel Xochicale, MX, (PhD Dept ElecElecComp Eng FT)  [@mxochicale](https://github.com/mxochicale/), 
-Dinghuang Zhang, DZ, (MSc Elec + Computer Eng FT)  [@DylanZhangzzz](https://github.com/DylanZhangzzz), and 
-Professor Christopher Baber, CB, [Website](https://www.birmingham.ac.uk/staff/profiles/eese/baber-chris.aspx) 
+The contribution for this work of 
+Miguel Xochicale, MX, [ [@mxochicale] ](https://github.com/mxochicale/), 
+Dinghuang Zhang, DZ, [ [@DylanZhangzzz] ](https://github.com/DylanZhangzzz), and 
+Professor Christopher Baber, CB, [ [website] ](https://www.birmingham.ac.uk/staff/profiles/eese/baber-chris.aspx) 
 is as follows:
 
 * Conceptualisation: CB, DZ, MX

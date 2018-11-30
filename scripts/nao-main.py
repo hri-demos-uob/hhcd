@@ -21,6 +21,8 @@ import Arm
 import Hand
 import MoveArm
 
+
+#to access functions
 import sys 
 sys.path.insert(0,'..')
 from functions import *
@@ -31,6 +33,7 @@ def main(IP, PORT):
 	tts = ALProxy("ALTextToSpeech", IP, PORT)
 
 	proxy = ALProxy("ALMotion",IP,PORT)
+	#names = ""######
 	names = "Body"
 	#names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
 	#names = ['HeadYaw', 'HeadPitch', 'RShoulderPitch', 'RShoulderRoll', 'RElbowYaw', 'RElbowRoll', 'RWristYaw', 'RHand']
@@ -40,6 +43,11 @@ def main(IP, PORT):
 	Arm.Reset(IP,PORT,proxy)
 
 	nao_collaboration(IP,PORT,tts)
+
+	
+	#testing functions
+	#detection.hand(IP,PORT,tts,showingimage=False)
+	#detection.hand_gesture_recognition(IP,PORT)
 
 
 def supermain(IP,PORT,LH,LS,LV,UH,US,UV):
@@ -52,21 +60,19 @@ def supermain(IP,PORT,LH,LS,LV,UH,US,UV):
     	again_flag=False
     	Right_H=0
     	Left_H=0
-    	tts.say("I am waiting!")
+    	#tts.say("I am waiting!")
 	#time.sleep(2)
     	target=detection.target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
-    	print ("target",target)
+    	print ("Checking target",target)
 
     
 	while target==1:# main loop
-	    	#target=detection.target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False)
-    		#print ("target",target)
 
 		x,y=detection.getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
 		print(x,y)
 		Left_H,Right_H=MoveArm.movementX(IP,PORT,x,y,tts,proxy)
 		print(Left_H,Right_H)
-	#	time.sleep(1)
+		#time.sleep(1)
 	        Hand_flag = True
 		
 		if Hand_flag==True:
@@ -128,19 +134,23 @@ def nao_collaboration(IP, PORT, tts):
 	move.setExpressiveListeningEnabled(False)
 	
 	while True:
-		#colour=speech.colour(IP,PORT,tts)
 		speechcolour=colour(IP,PORT,tts)
- 		if speechcolour=='Green':
-			print('Green')
-			LH,LS,LV=50,55,5
-			UH,US,UV=105,255,255
+		print(speechcolour)
+
+		if speechcolour== 'Green' or speechcolour == 'Green Brick' or speechcolour== 'Pick Green Brick' or speechcolour == 'Pick Up Green Brick':
+			print('I have seen/heard a:', speechcolour)
+			#Define Green color in HSV
+			LH,LS,LV=50,55,5 ## lower green
+			UH,US,UV=105,255,255 ## upper green
 			finish_flag=supermain(IP,PORT,LH,LS,LV,UH,US,UV)
 
-		elif speechcolour=='Blue':
-			LH,LS,LV=107,50,50
-			UH,US,UV=130,255,255
-			finish_flag=supermain(IP,PORT,LH,LS,LV,UH,US,UV)
-		        if finish_flag==True:
+		elif speechcolour== 'Blue' or speechcolour == 'Blue Brick' or speechcolour== 'Pick Blue Brick' or speechcolour == 'Pick Up Blue Brick':
+			print('I have seen/heard a:', speechcolour)
+			#Define Blue in HSV
+			LH,LS,LV=107,50,50  ## lower blue
+			UH,US,UV=130,255,255  ## upper blue
+			finish_flag=supermain(IP,PORT,LH,LS,LV,UH,US,UV)	        
+			if finish_flag==True:
 		            tts.say("I will pick next one")
 		            continue
  
@@ -158,6 +168,4 @@ if __name__ == "__main__":
 
 
 
-
-
-        
+ 
