@@ -14,7 +14,7 @@ Ethernet cable to both nao's head and the machine that is going to control NAO.
 Go to the network menu with the mouse and select `NAO` 
 and then you will get a message saying that the connection has been established
 
-3. Then open a terminal and run `testingNAO.py` as follows:
+3. Then open a terminal and run `hi-nao.py` as follows:
 ```
 python hi-nao.py
 ```

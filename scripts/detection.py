@@ -8,7 +8,7 @@
 #
 
 # Imports
-import argparse
+#import argparse
 import time
 import numpy as np
 import cv2
@@ -18,75 +18,6 @@ from PIL import Image
 #Importing scripts
 import Hand
 
-
-def main(IP, PORT):
-	blockwidth = 4
-
-
-	proxy = ALProxy("ALMotion",IP,PORT)
-	#names = "Body"
-	names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
-	stiffness = 1.0
-	proxy.stiffnessInterpolation(names, stiffness, 1.0)
-    	#proxy.wakeUp()
-
-	tts = ALProxy("ALTextToSpeech", IP, PORT)
-    	tts.setVolume(1.5)  ##Volume set to 100%
-   	tts.setParameter("pitchShift", 1.2) #Applies a pitch shifting to the voice
-    	tts.setParameter("doubleVoice", 0.0) #Deactivates double voice
-
-
-
- 
-	################################
-	##TESTING		
-	
-	###########
-	###(1) TESTING: getframe(IP,PORT) and showimage
-	#img=getframe(IP,PORT)
-	#print(img)
-	#showimage(img)
-
-	##########
-	###(2) TESTING: def target(IP,PORT,LH,LS,LV,UH,US,UV,tts):
-       	#LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
-        ##LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue': 
-	#d=target(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
-	#print(d)
-
-
-	##########
-	###(3) TESTING: def getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts):
-        #LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
-       	##LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':
-	#cx,cy=getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
-	#print(cx,cy)
-
-	##########
-	###(4) TESTING: 	def hand(IP,PORT):
-	#h=hand(IP,PORT,tts,showingimage=True)
-	#print(h)
-
-
-	##########
-	###(5) TESTING: #def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV):
-	#x,y=0,0
-       	##LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
-        #LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':	
-	#Left_H,Right_H=1,0 ##Left Hand, Right Hand
-	#CK=2
-	#a,b=recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV,tts)
-	#print(a,b)
-
-    	##proxy.rest() # Go to rest pose 
-
-
-	##############
-	###(6) TESTING: def check(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=False):
-       	##LH,LS,LV,UH,US,UV=50,55,5,105,255,255	##if colour=='Green':
-        #LH,LS,LV,UH,US,UV=107,50,50,130,255,255 ##elif colour=='Blue':		
-	#d=check(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
-	#print(d)
 
 
 def getframe(IP,PORT):
@@ -299,16 +230,16 @@ def hand(IP,PORT,tts,showingimage=False):
 
  
 
-def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV,tts):
+def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV,tts,proxy):
 	if CK==1:
-		Hand.choose(IP,PORT,Left_H,Right_H)
+		Hand.choose(IP,PORT,Left_H,Right_H,proxy)
         	pick_flag=True
         	again_flag=False
     	else:
         	#nx,ny=getcenter(IP,PORT,LH,LS,LV,UH,US,UV)
 		nx,ny=getcenter(IP,PORT,LH,LS,LV,UH,US,UV,tts,showingimage=True)
         	if nx<=x+25 and nx>=x-25 and ny<=y+25 and ny>=y-25:
-            		Hand.choose(IP,PORT,Left_H,Right_H)
+            		Hand.choose(IP,PORT,Left_H,Right_H,proxy)
             		pick_flag=True
             		again_flag=False
             		print("step")
@@ -323,20 +254,6 @@ def recenter(IP,PORT,CK,Left_H,Right_H,x,y,LH,LS,LV,UH,US,UV,tts):
 
 
 
-def nao_inclined_head(IP,PORT):
-	proxy = ALProxy("ALMotion",IP,PORT)
-	#names = "Body"
-	names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
-	stiffness = 1.0
-	proxy.stiffnessInterpolation(names, stiffness, 1.0)
-	proxy.setAngles("HeadPitch",0.157,0.2)
-
-
-def nao_relax_body(IP,PORT):
-	proxy = ALProxy("ALMotion",IP,PORT)
-    	proxy.rest() # Go to rest pose 
-
-
 def showimage(img):
 	cv2.imshow('image',img)
 	cv2.waitKey(0)
@@ -347,19 +264,6 @@ def showimage(img):
 	#gray = cv2.cvtColor(a, cv2.COLOR_BGR2GRAY)
 	#cv2.imwrite('graytest.jpg',gray)
 	#[x] https://docs.python-guide.org/scenarios/imaging/
-
-
-
-
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="169.254.199.42", help="Robot ip address")
-    parser.add_argument("--port", type=int, default=9559, help="Robot port number")
-    args = parser.parse_args()
-    main(args.ip, args.port)
-
 
 
 

@@ -3,15 +3,14 @@ logBOOK
 
 
 
-#todo
-
-* [ ]  Import common libraies in `__init__.py`
-for all fucntions.
-	added: Fri 16 Nov 16:44:44 GMT 2018
+# todo
 
 
-* [ ] code works for c1 and c2 only
-	added: Fri 16 Nov 14:06:26 GMT 2018
+* [ ] revise openCV issues and references 
+	to make filters that are robust to change in 
+	different light settings
+
+	added: Fri 30 Nov 00:44:00 GMT 2018
 
 
 
@@ -19,6 +18,9 @@ for all fucntions.
 	any problems for picking the bricks.
 
 	added: Fri 16 Nov 06:48:04 GMT 2018
+
+* [ ] check where exactly to put the bricks 
+	added: Fri 30 Nov 00:44:30 GMT 2018
 
 
 * [ ] create global variables in `detection.py` for
@@ -39,4 +41,18 @@ for all fucntions.
 	ADDED: Fri  9 Nov 12:20:49 GMT 2018
 
 
- 
+* [ ]  Import common libraies in `__init__.py`
+	for all fucntions.
+	added: Fri 16 Nov 16:44:44 GMT 2018
+
+
+
+# sorted
+
+* [x] code works for c1 and c2 only
+	added: Fri 16 Nov 14:06:26 GMT 2018
+
+	now with other positions 
+	sorted: Fri 30 Nov 00:38:13 GMT 2018
+
+

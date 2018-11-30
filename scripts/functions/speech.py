@@ -1,7 +1,15 @@
+#
+#
+# NAO: V4 T14
+# NAOQI: naoqi 2.1.4.13 with python_naoqi-2.1.4.13-linux64
+# MACHINE: Ubuntu 16.04_x64 with Python 2.7.13
+#
+# Reference: https://github.com/DylanZhangzzz/Cooperative-Robot-Nao/blob/Robot-code/speech.py
+#
+
 
 
 # Imports
-import argparse
 import time
 from naoqi import ALProxy
 

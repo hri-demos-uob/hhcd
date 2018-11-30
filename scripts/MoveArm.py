@@ -9,39 +9,23 @@
 
 
 # Imports
-import argparse
-import math
-import numpy
 import cv2
 from naoqi import ALProxy
 import time
-#import naoqi
 
 #Importing scripts
 import Arm
 
 
-def main(IP, PORT):
 
 
-	proxy = ALProxy("ALMotion",IP,PORT)
-	#names = "Body"
-	names = ['HeadYaw', 'HeadPitch', 'LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw', 'LHand']
-	stiffness = 1.0
-	proxy.stiffnessInterpolation(names, stiffness, 1.0)
-
-
-	tts = ALProxy("ALTextToSpeech", IP, PORT)
-
-	#TESTING
-	#x,y=150,100
-	#movement(IP,PORT,x,y,tts)
-
-
-def movement(IP,PORT,x,y,tts,proxy):
+#Testing X functions 
+def movementX(IP,PORT,x,y,tts,proxy):
     Lefthand_flag=0
     Righthand_flag=0
 
+	############
+	## A column
     if y>90 and y<=158: 
         if x>150 and x<=234:
             tts.say("The target location is A 1")
@@ -61,7 +45,10 @@ def movement(IP,PORT,x,y,tts,proxy):
             tts.say("But brick is too far, I can't pick it")
         else:
             tts.say("Too far I can't pick it")
-                
+       
+
+	############
+	## B column
     elif y>158 and y<=213:
         if x>140 and x<=225:
             tts.say("The target location is B 1")
@@ -81,12 +68,15 @@ def movement(IP,PORT,x,y,tts,proxy):
             Righthand_flag=1
         else:
             tts.say("Too far I can't pick it")
-    elif y>213 and y<=282:
-        if x>110 and x<=213:
+
+	############
+	## C column
+    elif y>213 and y<=300:
+        if x>120 and x<=180:
             tts.say("The target location is C 1")
             Arm.C1(IP,PORT,proxy)
             Lefthand_flag=1
-        elif x>213 and x<=315:
+        elif x>220 and x<=315:
             tts.say("The target location is C 2")
             Arm.C2(IP,PORT,proxy)
             Lefthand_flag=1
@@ -100,7 +90,10 @@ def movement(IP,PORT,x,y,tts,proxy):
             Righthand_flag=1
         else:
             tts.say("Too far I can't pick it")
-    elif y>282 and y<=370:
+
+	############
+	## D column
+    elif y>300 and y<=370:
         if x>74 and x<=194:
             tts.say("The target location is D 1")
             Arm.D1(IP,PORT,proxy)
@@ -119,107 +112,13 @@ def movement(IP,PORT,x,y,tts,proxy):
             Righthand_flag=1
         else:
             tts.say("Too far I can't pick it")
+
+
     else:
         tts.say("Too far I can't pick it")
+
+
     return Lefthand_flag, Righthand_flag
-
-
-def movementX(IP,PORT,x,y,tts,proxy):
-    Lefthand_flag=0
-    Righthand_flag=0
-
-    if y>90 and y<=158: 
-        if x>150 and x<=234:
-            tts.say("The target location is A 1")
-            tts.say("But brick is too far, I can't pick it")
-            #Arm.A1(IP,PORT,proxy)
-        elif x>234 and x<=315:
-            tts.say("The target location is A 2")
-            #Arm.A2(IP,PORT,proxy)
-            tts.say("But brick is too far, I can't pick it")
-        elif x>315 and x<=396:
-            tts.say("The target location is A 3")
-            #Arm.A3(IP,PORT,proxy)
-            tts.say("But brick is too far, I can't pick it")
-        elif x>396 and x<=477:
-            tts.say("The target location is A 4")
-            #Arm.A4(IP,PORT,proxy)
-            tts.say("But brick is too far, I can't pick it")
-        else:
-            tts.say("Too far I can't pick it")
-                
-    elif y>158 and y<=213:
-        if x>140 and x<=225:
-            tts.say("The target location is B 1")
-            #Arm.B1(IP,PORT,proxy)
-            #Lefthand_flag=1
-        elif x>225 and x<=316:
-            tts.say("The target location is B 2")
-            #Arm.B2(IP,PORT,proxy)
-            #Lefthand_flag=1
-        elif x>316 and x<=407:
-            tts.say("The target location is B 3")
-            #Arm.B3(IP,PORT,proxy)
-            #Righthand_flag=1
-        elif x>407 and x<=500:
-            tts.say("The target location is B 4")
-            #Arm.B4(IP,PORT,proxy)
-            #Righthand_flag=1
-        else:
-            tts.say("Too far I can't pick it")
-    elif y>213 and y<=300:
-        if x>120 and x<=180:
-            tts.say("The target location is C 1")
-            Arm.C1(IP,PORT,proxy)
-            Lefthand_flag=1
-        elif x>220 and x<=315:
-            tts.say("The target location is C 2")
-            Arm.C2(IP,PORT,proxy)
-            Lefthand_flag=1
-        elif x>315 and x<=419:
-            tts.say("The target location is C 3")
-            #Arm.C3(IP,PORT,proxy)
-            #Righthand_flag=1
-        elif x>419 and x<=530:
-            tts.say("The target location is C 4")
-            #Arm.C4(IP,PORT,proxy)
-            #Righthand_flag=1
-        else:
-            tts.say("Too far I can't pick it")
-    elif y>300 and y<=370:
-        if x>74 and x<=194:
-            tts.say("The target location is D 1")
-            #Arm.D1(IP,PORT,proxy)
-            #Lefthand_flag=1
-        elif x>194 and x<=316:
-            tts.say("The target location is D 2")
-            #Arm.D2(IP,PORT,proxy)
-            #Lefthand_flag=1
-        elif x>316 and x<=438:
-            tts.say("The target location is D 3")
-            #Arm.D3(IP,PORT,proxy)
-            #Righthand_flag=1
-        elif x>438 and x<=550:
-            tts.say("The target location is D 4")
-            #Arm.D4(IP,PORT,proxy)
-            #Righthand_flag=1
-        else:
-            tts.say("Too far I can't pick it")
-    else:
-        tts.say("Too far I can't pick it")
-    return Lefthand_flag, Righthand_flag
-
-
-
-
-#IP = "169.254.67.145"
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="169.254.199.42", help="Robot ip address")
-    parser.add_argument("--port", type=int, default=9559, help="Robot port number")
-    args = parser.parse_args()
-    main(args.ip, args.port)
-
 
 
 
