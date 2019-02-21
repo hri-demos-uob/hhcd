@@ -1,8 +1,9 @@
 Demonstration of Human-Humanoid Collaboration
 ---
+Technical report for the demonstration of a human-humanoid collaboration 
+activity for the Open Days at The University of Birmingham [PDF](/docs/technical-report/tr.pdf)
 
-
-
+![experiment](/docs/technical-report/figs/experiment/main/experiment.png)
 
 
 ## Author Contributions
